@@ -4,18 +4,7 @@
 	$color = $inData["color"];
 	$userId = $inData["userId"];
 
-	$dbHost = getenv('COLORS_DB_HOST');
-	$dbUser = getenv('COLORS_DB_USER');
-	$dbPassword = getenv('COLORS_DB_PASSWORD');
-	$dbName = getenv('COLORS_DB_NAME');
-
-	if (!$dbHost || !$dbUser || !$dbPassword || !$dbName)
-	{
-		returnWithError("Database configuration is missing");
-		exit;
-	}
-
-	$conn = new mysqli($dbHost, $dbUser, $dbPassword, $dbName);
+	$conn = new mysqli("YOUR_DB_HOST", "YOUR_DB_USER", "YOUR_DB_PASSWORD", "YOUR_DB_NAME");
 	if ($conn->connect_error) 
 	{
 		returnWithError( $conn->connect_error );

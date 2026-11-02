@@ -11,7 +11,7 @@ These diagrams model the application in this repository. Each diagram has a Plan
 ## Scope and verification
 
 - **Use case:** The user can log in, log out, add a color, and search their colors. `public/index.html`, `public/color.html`, and `public/js/code.js` provide these actions. Registration, editing, deleting, and administration are not implemented. Login is a normal UI precondition for color operations, rather than an `include` relationship that would repeat login on every request. The database is internal to the modeled system, rather than an external user actor.
-- **Activity:** The diagram follows one search attempt from loading `color.html` through `readCookie()`, `searchColor()`, and `api/SearchColors.php`. A focused activity diagram models this operation rather than implying that the UI forces a fixed sequence of adding and searching. It includes the new missing-environment-configuration branch and preserves the existing client behavior on error responses. The connection-error decision represents the source's explicit `connect_error` check; on PHP runtimes that throw connection exceptions, the script may terminate earlier.
+- **Activity:** The diagram follows one search attempt from loading `color.html` through `readCookie()`, `searchColor()`, and `api/SearchColors.php`. A focused activity diagram models this operation rather than implying that the UI forces a fixed sequence of adding and searching. It preserves the lab code's existing client behavior on error responses. The connection-error decision represents the source's explicit `connect_error` check; on PHP runtimes that throw connection exceptions, the script may terminate earlier.
 - **Class:** The application uses procedural JavaScript and PHP. The `module` and `script` stereotypes group real global state and functions; they do not claim that source-level classes exist. Dependencies are used for HTTP calls and SQL access. User-to-Color ownership is an association, not inheritance or composition. Users can have zero or more colors. Only fields referenced by the SQL are shown; the repository contains no SQL schema to verify extra fields or physical foreign-key enforcement.
 
 ## Source checks
@@ -23,7 +23,7 @@ These diagrams model the application in this repository. Each diagram has a Plan
 | Add color | `addColor()` sends `color` and `userId`; `AddColor.php` inserts `UserId` and `Name` into `Colors`. |
 | Search colors | `searchColor()` sends `search` and `userId`; `SearchColors.php` uses a prepared `LIKE` query with a user filter and returns color names. |
 | Client state | `userId`, `firstName`, and `lastName` are globals stored by `saveCookie()` and restored by `readCookie()`. The cookie is given a 20-minute expiration. |
-| Connection settings | Each PHP endpoint reads `COLORS_DB_HOST`, `COLORS_DB_USER`, `COLORS_DB_PASSWORD`, and `COLORS_DB_NAME` from the process environment. No actual connection values belong in a diagram or tracked configuration file. |
+| Connection settings | Each endpoint uses the lab's direct `mysqli` connection format. The repository contains placeholder connection values; actual database settings are supplied on the server. |
 
 ## Existing limitations reflected in the model
 
@@ -41,7 +41,7 @@ The class and use-case sources use PlantUML's Smetana layout engine, so no separ
 
 ## Validation performed
 
-All three sources were rendered and the PNGs visually inspected. PHP 8.3 syntax checks passed for the three endpoints. Eighteen local HTTP checks verified the missing-configuration responses and the environment-variable-to-connection mapping using a stubbed MySQL connection; a live database was not tested. A JavaScript mock verified both successful search rendering and the existing no-results callback error described by the activity diagram.
+All three sources were rendered and the PNGs visually inspected. PHP 8.3 syntax checks passed for the three endpoints. The direct connection format was checked against the original lab code; a live database was not tested. A JavaScript mock verified both successful search rendering and the existing no-results callback error described by the activity diagram.
 
 ## AI usage
 

@@ -25,22 +25,17 @@ endif
 
 |PHP API / MySQL|
 :Decode request JSON;
-:Read database environment variables;
-if (All database settings present?) then (no)
-  :Return JSON error\nDatabase configuration is missing;
-else (yes)
-  :Open MySQL connection;
-  if (Connection error branch?) then (yes)
-    :Return JSON connection error;
+:Open MySQL connection;
+if (Connection error branch?) then (yes)
+  :Return JSON connection error;
+else (no)
+  :Run prepared SELECT Name FROM Colors\nWHERE Name LIKE %search% AND UserID = userId;
+  if (One or more matches?) then (yes)
+    :Return JSON results array\nand empty error;
   else (no)
-    :Run prepared SELECT Name FROM Colors\nWHERE Name LIKE %search% AND UserID = userId;
-    if (One or more matches?) then (yes)
-      :Return JSON results array\nand empty error;
-    else (no)
-      :Return JSON error\nNo Records Found\n(no results property);
-    endif
-    :Close statement and connection;
+    :Return JSON error\nNo Records Found\n(no results property);
   endif
+  :Close statement and connection;
 endif
 
 |Browser / JavaScript|
