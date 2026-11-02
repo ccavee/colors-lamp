@@ -1,0 +1,73 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam activity {
+  BackgroundColor #EEF4FA
+  BorderColor #35536F
+  DiamondBackgroundColor #FFF4D6
+}
+title COLORS - Search Activity (as implemented)
+
+|Browser / JavaScript|
+start
+:Open color.html after a prior login;
+:readCookie() reads user data;
+if (userId < 0?) then (yes)
+  :Redirect to index.html;
+  stop
+else (no)
+  :User enters search text\nand clicks Search Color;
+  :searchColor() clears status;
+  :POST /LAMPAPI/SearchColors.php\nJSON: search, userId;
+endif
+
+|PHP API / MySQL|
+:Decode request JSON;
+:Read database environment variables;
+if (All database settings present?) then (no)
+  :Return JSON error\nDatabase configuration is missing;
+else (yes)
+  :Open MySQL connection;
+  if (Connection error branch?) then (yes)
+    :Return JSON connection error;
+  else (no)
+    :Run prepared SELECT Name FROM Colors\nWHERE Name LIKE %search% AND UserID = userId;
+    if (One or more matches?) then (yes)
+      :Return JSON results array\nand empty error;
+    else (no)
+      :Return JSON error\nNo Records Found\n(no results property);
+    endif
+    :Close statement and connection;
+  endif
+endif
+
+|Browser / JavaScript|
+if (Response reaches readyState 4\nwith HTTP status 200?) then (yes)
+  :Display Color(s) has been retrieved;
+  :Parse response JSON;
+  if (Response has results array?) then (yes)
+    :Build a line-separated list of names;
+    :Replace color list contents;
+  else (no)
+    :Access results.length on undefined;\ncallback throws a JavaScript TypeError;
+    note right
+      Existing implementation bug:
+      the response error is not checked.
+      The success status was already shown;
+      the previous list is not replaced.
+    end note
+  endif
+else (no)
+  :Callback does not update the results;
+endif
+stop
+
+legend bottom
+  Scope: one search attempt through the normal browser UI.
+  The API trusts the supplied userId; it does not verify a server session.
+  Connection exceptions and malformed JSON can also interrupt this flow;
+  the diagram shows the explicit branches in the application source.
+endlegend
+@enduml

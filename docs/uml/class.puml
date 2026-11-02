@@ -1,0 +1,81 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam classAttributeIconSize 0
+hide empty members
+title COLORS - Class Diagram (logical model of procedural code)
+
+package "Browser" {
+  class ColorsClient <<module>> {
+    +urlBase : String = "/LAMPAPI"
+    +extension : String = "php"
+    +userId : Integer
+    +firstName : String
+    +lastName : String
+    +doLogin() : void
+    +saveCookie() : void
+    +readCookie() : void
+    +doLogout() : void
+    +addColor() : void
+    +searchColor() : void
+  }
+}
+
+package "PHP API" {
+  class "Login.php" as LoginAPI <<script>> {
+    +getRequestInfo() : JSON object
+    +sendResultInfoAsJson(obj : String) : void
+    +returnWithError(err : String) : void
+    +returnWithInfo(firstName : String, lastName : String, id : Integer) : void
+  }
+  class "AddColor.php" as AddAPI <<script>> {
+    +getRequestInfo() : JSON object
+    +sendResultInfoAsJson(obj : String) : void
+    +returnWithError(err : String) : void
+  }
+  class "SearchColors.php" as SearchAPI <<script>> {
+    +getRequestInfo() : JSON object
+    +sendResultInfoAsJson(obj : String) : void
+    +returnWithError(err : String) : void
+    +returnWithInfo(searchResults : String) : void
+  }
+}
+
+package "Persistent data (fields used by the APIs)" {
+  class User <<entity>> {
+    +ID : Integer
+    +firstName : String
+    +lastName : String
+    +Login : String
+    +Password : String
+  }
+  class Color <<entity>> {
+    +UserID : Integer
+    +Name : String
+  }
+  User "1" -- "0..*" Color : owns
+}
+
+ColorsClient ..> LoginAPI : POST login, password
+ColorsClient ..> AddAPI : POST color, userId
+ColorsClient ..> SearchAPI : POST search, userId
+LoginAPI ..> User : SELECT by Login and Password
+AddAPI ..> Color : INSERT UserId, Name
+SearchAPI ..> Color : SELECT Name by name pattern and UserID
+
+note bottom of ColorsClient
+  ColorsClient groups global variables and functions in public/js/code.js.
+  The PHP boxes group actual script functions; they are not PHP classes.
+  Dependencies describe use, not inheritance or object ownership.
+end note
+note bottom of Color
+  User and Color model rows in Users and Colors.
+  Types and ownership multiplicities are logical interpretations
+  of the API usage. No SQL schema is included, so a physical
+  foreign-key constraint and additional columns are not asserted.
+  UserId / UserID capitalization follows the same logical field.
+end note
+@enduml

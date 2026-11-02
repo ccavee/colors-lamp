@@ -41,3 +41,7 @@ AI tools were used for guidance and troubleshooting during development and docum
 The PHP APIs read their connection settings from environment variables; do not put real connection values in tracked files. Local `.env` and configuration files are ignored, but ignored files do not remove values already committed.
 
 Database credentials were present in earlier commits. Change the exposed database password on the server and update the PHP environment configuration. The cleanup commit removes the values from the current files; it does not erase old commits. Removing them from repository history would be a separate history rewrite that must be coordinated with anyone using the repository.
+
+## UML diagrams
+
+The use case, search activity, and class diagrams are in [`docs/uml`](docs/uml/README.md), with editable PlantUML sources, rendered PNGs, and notes that connect each model to the implementation.

@@ -1,0 +1,40 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 15
+skinparam packageStyle rectangle
+title COLORS - Use Case Diagram
+
+actor User
+rectangle "COLORS web application" {
+  usecase "Log in" as Login
+  usecase "Add a color" as Add
+  usecase "Search my colors" as Search
+  usecase "Log out" as Logout
+}
+User -- Login
+User -- Add
+User -- Search
+User -- Logout
+
+note right of Login
+  Enter an existing user's login and password.
+  Success stores a browser cookie and opens color.html.
+end note
+note right of Add
+  Normal UI precondition for adding, searching,
+  and logging out: the user has logged in.
+  Login is not repeated inside each operation.
+end note
+note right of Search
+  Match color names containing the search text,
+  restricted to the supplied userId.
+end note
+note bottom of Logout
+  Clear browser user data and cookie;
+  return to index.html.
+end note
+@enduml
