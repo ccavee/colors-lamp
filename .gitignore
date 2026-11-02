@@ -1,3 +1,6 @@
 *.env
 config.php
 *.log
+.env
+.env.*
+config.local.php
