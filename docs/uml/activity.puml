@@ -1,0 +1,63 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 16
+skinparam activity {
+  BackgroundColor #F2F5F8
+  BorderColor #455A70
+  DiamondBackgroundColor #FFF6DA
+}
+title COLORS - Activity Diagram
+
+start
+:Open login page;
+:Enter username and password;
+:Send login request to Login.php;
+:Look up matching user in the database;
+
+if (Valid login?) then (yes)
+  :Save user details in a 20-minute cookie;
+  :Open color page and read the cookie;
+else (no)
+  :Show login error and remain on login page;
+  stop
+endif
+
+:Choose Add Color, Search Color, or Log Out;
+while (Selected Log Out?) is (no)
+  if (Selected Add Color?) then (yes)
+    :Enter color name;
+    :Send color and userId to AddColor.php;
+    :Insert the color into the database;
+    :Show "Color has been added";
+  else (Search Color)
+    :Enter search text;
+    :Send search text and userId to SearchColors.php;
+    :Find matching names for that user;
+    :Show "Color(s) has been retrieved";
+    if (Response contains matching colors?) then (yes)
+      :Display returned color names;
+    else (no)
+      :JavaScript error when reading results;
+      :Previous color list remains;
+      note right
+        Existing code behavior:
+        the API returns an error without a
+        results array when no colors match.
+        The browser does not check that error.
+      end note
+    endif
+  endif
+  :Choose Add Color, Search Color, or Log Out;
+endwhile (yes)
+
+:Clear user details and expire the cookie;
+:Return to login page;
+stop
+
+legend bottom
+  Scope: login and normal color operations with completed HTTP 200 responses
+  and an available database. A failed login ends this attempt; the user may retry.
+endlegend
+@enduml

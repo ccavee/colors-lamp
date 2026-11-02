@@ -1,0 +1,75 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 15
+skinparam classAttributeIconSize 0
+hide empty members
+title COLORS - Class Diagram
+
+package "Browser" {
+  class "code.js" as Client <<script>> {
+    +userId : Integer
+    +firstName : String
+    +lastName : String
+    +doLogin()
+    +saveCookie()
+    +readCookie()
+    +doLogout()
+    +addColor()
+    +searchColor()
+  }
+}
+
+package "LAMPAPI" {
+  class "Login.php" as Login <<script>> {
+    +getRequestInfo()
+    +returnWithError(err)
+    +returnWithInfo(firstName, lastName, id)
+  }
+  class "AddColor.php" as Add <<script>> {
+    +getRequestInfo()
+    +returnWithError(err)
+  }
+  class "SearchColors.php" as Search <<script>> {
+    +getRequestInfo()
+    +returnWithError(err)
+    +returnWithInfo(searchResults)
+  }
+}
+
+package "Database" {
+  class User <<entity>> {
+    +ID : Integer
+    +FirstName : String
+    +LastName : String
+    +Login : String
+    +Password : String
+  }
+  class Color <<entity>> {
+    +ID : Integer
+    +Name : String
+    +UserID : Integer
+  }
+}
+
+Client ..> Login : login request
+Client ..> Add : add request
+Client ..> Search : search request
+Login ..> User : reads
+Add ..> Color : inserts
+Search ..> Color : searches
+User "1" -- "0..*" Color : owns
+
+note bottom of Color
+  User and Color represent rows in Users and Colors.
+  UserID links a color to Users.ID.
+  The lab schema does not declare a foreign-key constraint.
+end note
+
+legend bottom
+  Script boxes group the real functions in each file; the app is procedural.
+  No inheritance is implemented. Only selected fields and functions are shown.
+endlegend
+@enduml
