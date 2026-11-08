@@ -1,3 +1,5 @@
+/* exported doLogin, readCookie, doLogout, addColor, searchColor */
+
 const urlBase = '../LAMPAPI';
 const extension = 'php';
 
@@ -30,7 +32,7 @@ function doLogin()
 	{
 		xhr.onreadystatechange = function() 
 		{
-			if (this.readyState == 4 && this.status == 200) 
+			if (this.readyState === 4 && this.status === 200)
 			{
 				let jsonObject = JSON.parse( xhr.responseText );
 				userId = jsonObject.id;
@@ -71,19 +73,19 @@ function readCookie()
 	userId = -1;
 	let data = document.cookie;
 	let splits = data.split(",");
-	for(var i = 0; i < splits.length; i++) 
+	for(let i = 0; i < splits.length; i++)
 	{
 		let thisOne = splits[i].trim();
 		let tokens = thisOne.split("=");
-		if( tokens[0] == "firstName" )
+		if( tokens[0] === "firstName" )
 		{
 			firstName = tokens[1];
 		}
-		else if( tokens[0] == "lastName" )
+		else if( tokens[0] === "lastName" )
 		{
 			lastName = tokens[1];
 		}
-		else if( tokens[0] == "userId" )
+		else if( tokens[0] === "userId" )
 		{
 			userId = parseInt( tokens[1].trim() );
 		}
@@ -113,7 +115,7 @@ function addColor()
 	let newColor = document.getElementById("colorText").value;
 	document.getElementById("colorAddResult").innerHTML = "";
 
-	let tmp = {color:newColor,userId,userId};
+	let tmp = {color:newColor,userId};
 	let jsonPayload = JSON.stringify( tmp );
 
 	let url = urlBase + '/AddColor.' + extension;
@@ -125,7 +127,7 @@ function addColor()
 	{
 		xhr.onreadystatechange = function() 
 		{
-			if (this.readyState == 4 && this.status == 200) 
+			if (this.readyState === 4 && this.status === 200)
 			{
 				document.getElementById("colorAddResult").innerHTML = "Color has been added";
 			}
@@ -158,7 +160,7 @@ function searchColor()
 	{
 		xhr.onreadystatechange = function() 
 		{
-			if (this.readyState == 4 && this.status == 200) 
+			if (this.readyState === 4 && this.status === 200)
 			{
 				document.getElementById("colorSearchResult").innerHTML = "Color(s) has been retrieved";
 				let jsonObject = JSON.parse( xhr.responseText );
