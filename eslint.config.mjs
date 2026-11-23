@@ -15,6 +15,7 @@ export default [
         document: "readonly",
         window: "readonly",
         XMLHttpRequest: "readonly",
+        module: "readonly",
       },
     },
     rules: {
