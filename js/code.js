@@ -1,5 +1,15 @@
 /* exported doLogin, readCookie, doLogout, addColor, searchColor */
 
+function formatColorResults(colors)
+{
+	if (!Array.isArray(colors))
+	{
+		throw new TypeError("Color results must be an array");
+	}
+
+	return colors.join("<br />\r\n");
+}
+
 const urlBase = '../LAMPAPI';
 const extension = 'php';
 
@@ -162,18 +172,15 @@ function searchColor()
 		{
 			if (this.readyState === 4 && this.status === 200)
 			{
-				document.getElementById("colorSearchResult").innerHTML = "Color(s) has been retrieved";
 				let jsonObject = JSON.parse( xhr.responseText );
-				
-				for( let i=0; i<jsonObject.results.length; i++ )
+				if (!Array.isArray(jsonObject.results))
 				{
-					colorList += jsonObject.results[i];
-					if( i < jsonObject.results.length - 1 )
-					{
-						colorList += "<br />\r\n";
-					}
+					document.getElementById("colorSearchResult").innerHTML = "Invalid response from server";
+					return;
 				}
-				
+
+				document.getElementById("colorSearchResult").innerHTML = "Color(s) has been retrieved";
+				colorList = formatColorResults(jsonObject.results);
 				document.getElementsByTagName("p")[0].innerHTML = colorList;
 			}
 		};
@@ -184,4 +191,9 @@ function searchColor()
 		document.getElementById("colorSearchResult").innerHTML = err.message;
 	}
 	
+}
+
+if (typeof module !== "undefined")
+{
+	module.exports = {formatColorResults, searchColor};
 }
